@@ -14,39 +14,22 @@ namespace Gmail
         {
             try
             {
-                string kad = "";
-                string pass = "";
-                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+                string from = Console.ReadLine();
+                string to = Console.ReadLine();
+                SmtpClient client = new SmtpClient();
+                client.Port = 587;
+                client.Host = "smtp.gmail.com";
+                client.EnableSsl = true;
+                client.Timeout = 10000;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new System.Net.NetworkCredential(from, Console.ReadLine());
 
-                smtp.EnableSsl = true;
-                smtp.UseDefaultCredentials = false;
-               
-                Console.WriteLine("Kullanıcı Adınız :");
-                kad = Console.ReadLine();
-                Console.WriteLine("Şifreniz");
-                pass = Console.ReadLine();
+                MailMessage mm = new MailMessage(from, to, Console.ReadLine(), Console.ReadLine());
+                mm.BodyEncoding = UTF8Encoding.UTF8;
+                mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
 
-                smtp.Credentials = new NetworkCredential("kad", "pass");
-
-
-                Console.WriteLine("Kime :");
-                MailAddress to = new MailAddress(Console.ReadLine());
-
-                Console.WriteLine("Kimden : " + kad);
-                MailAddress from = new MailAddress(kad);
-
-                MailMessage mail = new MailMessage(from, to);
-                Console.WriteLine("Konu :");
-                mail.Subject = Console.ReadLine();
-
-                Console.WriteLine("Mesajınız :");
-                mail.Body = Console.ReadLine();
-
-
-
-
-                Console.WriteLine("Mail Gönderildi...");
-                smtp.Send(mail);
+                client.Send(mm);
             }
             catch (Exception e)
             {
